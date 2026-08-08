@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<meta name="theme-color" content="#0c0f13">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Run Sheet">
+<title>AudioMap — Demo Run Sheet</title>
+<style>
+  :root {
+    --bg:#0c0f13; --panel:#141922; --panel-2:#1b222d; --line:#29323f;
+    --ink:#eef2f6; --ink-dim:#a6b3c2; --ink-faint:#63707f;
+    --signal:#4fd08a; --signal-dim:#2f7d55;
+    --say:#f7bd52; --say-bg:rgba(247,189,82,0.13); --say-line:#f7bd52;
+    --new:#62b6ff; --new-bg:rgba(98,182,255,0.12);
+    --mono: ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
+    --sans: system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --bar-h: 64px;
+  }
+  :root[data-theme="light"] {
+    --bg:#f4f6f8; --panel:#ffffff; --panel-2:#eef1f5; --line:#d7dde5;
+    --ink:#131920; --ink-dim:#41505f; --ink-faint:#8a95a2;
+    --signal:#1a9257; --signal-dim:#8fd6b1;
+    --say:#9a6410; --say-bg:rgba(154,100,16,0.10); --say-line:#c6892a;
+    --new:#1f7fd6; --new-bg:rgba(31,127,214,0.10);
+  }
+
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html, body { margin:0; height:100%; }
+  html {
+    background:var(--bg); color:var(--ink);
+    font-family:var(--sans); font-size:21px; line-height:1.5;
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  }
+  body {
+    scroll-snap-type: y proximity;
+    overflow-y: scroll; height:100dvh;
+    -webkit-overflow-scrolling:touch;
+    scroll-padding-top: 6px;
+  }
+
+  .progress {
+    position:fixed; top:0; left:0; height:4px; width:0%;
+    background:var(--signal); z-index:40;
+    transition:width .18s ease; pointer-events:none;
+  }
+  @media (prefers-reduced-motion: reduce){ .progress{ transition:none; } }
+
+  .panel {
+    scroll-snap-align:start;
+    min-height:100dvh;
+    padding: calc(env(safe-area-inset-top) + 22px) 20px calc(var(--bar-h) + env(safe-area-inset-bottom) + 30px);
+    display:flex; flex-direction:column; justify-content:flex-start;
+  }
+  .panel-inner { width:100%; max-width:680px; margin:0 auto; }
+
+  .eyebrow { display:flex; align-items:center; gap:12px; margin-bottom:18px; }
+  .eyebrow .num {
+    font-family:var(--mono); font-size:19px; font-weight:700;
+    color:var(--bg); background:var(--signal);
+    width:38px; height:38px; border-radius:9px;
+    display:grid; place-items:center; flex-shrink:0;
+  }
+  .eyebrow h2 {
+    font-size:clamp(30px,8vw,40px); margin:0; line-height:1.06;
+    letter-spacing:-0.02em; text-wrap:balance; font-weight:750;
+  }
+  .eyebrow .tag {
+    font-family:var(--mono); font-size:13px; font-weight:700; letter-spacing:.08em;
+    text-transform:uppercase; color:var(--new);
+    border:1.5px solid var(--new); border-radius:7px; padding:4px 10px; flex-shrink:0;
+  }
+
+  .steps-line {
+    font-family:var(--mono); font-size:16px; color:var(--ink-dim);
+    line-height:2; margin:0 0 20px; letter-spacing:.01em;
+  }
+  .steps-line b { color:var(--signal); font-weight:600; }
+  .steps-line .sep { color:var(--ink-faint); padding:0 4px; }
+
+  ul { margin:0; padding:0; list-style:none; }
+  li { position:relative; padding-left:26px; margin:15px 0; font-size:22px; line-height:1.4; }
+  li::before{
+    content:""; position:absolute; left:2px; top:11px;
+    width:10px; height:10px; border-radius:3px; background:var(--signal-dim);
+  }
+  li ul { margin:10px 0 4px; }
+  li ul li { margin:9px 0; color:var(--ink-dim); font-size:19px; }
+  li ul li::before{
+    background:none; border:2px solid var(--ink-faint);
+    width:8px; height:8px; top:9px; border-radius:50%;
+  }
+  b.k { color:var(--ink); font-weight:650; }
+
+  code {
+    font-family:var(--mono); font-size:.82em;
+    background:var(--panel-2); color:var(--ink);
+    padding:3px 8px; border-radius:6px; white-space:nowrap;
+    display:inline-block; margin:3px 4px 3px 0;
+  }
+
+  .say {
+    display:flex; flex-direction:column; gap:8px;
+    background:var(--say-bg); border-left:5px solid var(--say-line);
+    border-radius:12px; padding:18px 20px; margin:22px 0 8px;
+  }
+  .say .lbl {
+    font-family:var(--mono); font-size:14px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--say); font-weight:800;
+  }
+  .say p { margin:0; font-size:23px; line-height:1.4; color:var(--ink); }
+  .say p b { color:var(--say); font-weight:700; }
+
+  .subhead {
+    font-family:var(--mono); font-size:15px; letter-spacing:.1em;
+    text-transform:uppercase; color:var(--ink-faint); margin:24px 0 8px;
+  }
+
+  .cover .panel-inner{ margin-top:9vh; }
+  .cover .kick {
+    font-family:var(--mono); font-size:16px; letter-spacing:.2em;
+    text-transform:uppercase; color:var(--signal); margin:0 0 16px;
+  }
+  .cover h1 {
+    font-size:clamp(46px,13vw,68px); line-height:1.0; margin:0;
+    letter-spacing:-0.03em; text-wrap:balance; font-weight:780;
+  }
+  .cover .lede { color:var(--ink-dim); font-size:20px; margin:22px 0 0; line-height:1.45; }
+  .cover .legend {
+    display:flex; flex-direction:column; gap:11px; margin-top:32px;
+    font-family:var(--mono); font-size:16px; color:var(--ink-dim);
+  }
+  .cover .legend span { display:flex; align-items:center; gap:11px; }
+  .swatch { width:16px; height:16px; border-radius:5px; flex-shrink:0; }
+  .cover .go {
+    margin-top:34px; font-family:var(--mono); font-size:16px;
+    color:var(--ink-faint); letter-spacing:.04em;
+  }
+
+  .bar {
+    position:fixed; left:0; right:0; bottom:0; z-index:30;
+    background:color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+    border-top:1px solid var(--line);
+    padding-bottom:env(safe-area-inset-bottom);
+  }
+  .bar-scroll {
+    display:flex; gap:7px; overflow-x:auto; scrollbar-width:none;
+    padding:10px 13px; height:var(--bar-h); align-items:center;
+  }
+  .bar-scroll::-webkit-scrollbar{ display:none; }
+  .bar button {
+    flex:0 0 auto; font-family:var(--mono); font-size:14px; letter-spacing:.02em;
+    color:var(--ink-dim); background:transparent;
+    border:1px solid var(--line); border-radius:999px;
+    padding:0 15px; height:44px; min-width:44px; cursor:pointer;
+    display:inline-flex; align-items:center; gap:8px; white-space:nowrap;
+    transition:color .12s, background .12s, border-color .12s;
+  }
+  .bar button .bn { font-weight:700; color:var(--ink-faint); }
+  .bar button.active {
+    color:var(--bg); background:var(--signal); border-color:var(--signal);
+  }
+  .bar button.active .bn { color:var(--bg); }
+
+  .theme-btn {
+    position:fixed; top:calc(env(safe-area-inset-top) + 10px); right:12px; z-index:40;
+    width:44px; height:44px; border-radius:50%;
+    background:var(--panel); border:1px solid var(--line); color:var(--ink-dim);
+    font-size:19px; cursor:pointer; display:grid; place-items:center;
+  }
+</style>
+</head>
+<!-- COVER -->
+<section class="panel cover" id="s0" data-label="Start">
+  <div class="panel-inner">
+    <p class="kick">Presenter Run Sheet</p>
+    <h1>AudioMap<br>Live Demo</h1>
+    <p class="lede">Setup → Capture → Measure → Timing → Tuning → Playback → Deploy</p>
+    <div class="legend">
+      <span><i class="swatch" style="background:var(--signal)"></i> structure &amp; steps</span>
+      <span><i class="swatch" style="background:var(--say)"></i> the line to land</span>
+      <span><i class="swatch" style="background:var(--new)"></i> new in v2</span>
+    </div>
+    <p class="go">▲ swipe up &nbsp;·&nbsp; or tap a step below</p>
+  </div>
+</section>
+
+<section class="panel" id="s1" data-label="Setup">
+  <div class="panel-inner">
+    <div class="eyebrow"><span class="num">1</span><h2>Setup Wizard</h2></div>
+    <p class="steps-line"><b>Audio device</b><span class="sep">›</span><b>Topology</b><span class="sep">›</span><b>Gain</b><span class="sep">›</span><b>Identification</b><span class="sep">›</span><b>Positioning</b><span class="sep">›</span><b>Coverage</b></p>
+    <ul>
+      <li><b class="k">Topology = define the system's structure</b>
+        <ul>
+          <li>FOH console · inline processor · processing in the amps</li>
+          <li>multi-channel · multi-way (band-limited + crossover network)</li>
+          <li>presets to get you going</li>
+        </ul>
+      </li>
+      <li><b class="k">Positioning + Identification = spatial ground truth</b>
+        <ul>
+          <li>baseline timing / distance measurements</li>
+          <li>user confirms or specifies</li>
+        </ul>
+      </li>
+      <li>the picture builds page by page</li>
+    </ul>
+  </div>
+</section>
+
+<section class="panel" id="s2" data-label="Capture">
+  <div class="panel-inner">
+    <div class="eyebrow"><span class="num">2</span><h2>Auto-Capture</h2></div>
+    <div class="say">
+      <span class="lbl">Say this</span>
+      <p><b>One pass, spatially aware.</b> Every source at every position, simultaneously — no manual choreography.</p>
+    </div>
+    <ul>
+      <li>all sources, all positions, single pass</li>
+      <li>simultaneous cross-correlation → position</li>
+      <li>transfer-function capture, time-domain multiplexed across sources</li>
+      <li><b class="k">replaces</b> the grind: generator, routing, muting, alignment, naming — repeated</li>
+      <li>builds the right averages across the listening area</li>
+    </ul>
+  </div>
+</section>
+
+<section class="panel" id="s3" data-label="Measure">
+  <div class="panel-inner">
+    <div class="eyebrow"><span class="num">3</span><h2>Measure Tab</h2></div>
+    <ul>
+      <li>all one-pass data, ready to analyse</li>
+      <li>view in <b class="k">time · frequency · spatial</b> domains</li>
+    </ul>
+  </div>
+</section>
+
+<section class="panel" id="s4" data-label="Timing">
+  <div class="panel-inner">
+    <div class="eyebrow"><span class="num">4</span><h2>Timing Tab</h2></div>
+    <ul>
+      <li><b class="k">align multiple sources</b> — phase + coupling</li>
+      <li>modes:
+        <ul>
+          <li>broadband — delay lines, centre / out fill</li>
+          <li>band-constrained multiway — sub → tops, crossovers</li>
+        </ul>
+      </li>
+    </ul>
+    <div class="say">
+      <span class="lbl">Say this</span>
+      <p><b>Traditional:</b> align first → re-measure → then EQ. <b>AudioMap:</b> one capture, before &amp; after computed together, feeding every EQ decision.</p>
+    </div>
+    <ul>
+      <li>before vs after in <b class="k">time, frequency AND spatial</b></li>
+    </ul>
+  </div>
+</section>
+
+<section class="panel" id="s5" data-label="Tuning">
+  <div class="panel-inner">
+    <div class="eyebrow"><span class="num">5</span><h2>Tuning Tab</h2><span class="tag">v2</span></div>
+    <ul>
+      <li><b class="k">auto-created, per-source</b> — one tuning per box
+        <ul><li>stereo = separate L / R</li></ul>
+      </li>
+    </ul>
+    <div class="say">
+      <span class="lbl">New v2 · Groups</span>
+      <p>One aligned-sum tuning across a group. FOH: quick measures → parallel tuning on the master bus. Or per-section: tops / fills / subs.</p>
+    </div>
+    <p class="subhead">Default — per-box (best result)</p>
+    <ul>
+      <li>handles L-vs-R room differences</li>
+      <li>corrects <b class="k">at the source</b> → max power per box, before the room varies it</li>
+    </ul>
+    <p class="subhead">How it's built</p>
+    <ul>
+      <li>power average over coverage → magnitude curve to correct</li>
+      <li>inverse = target correction</li>
+      <li>algo adapts in real time to your DSP:
+        <ul><li><code># bands</code> <code>IIR/FIR</code> <code>min/lin phase</code> <code>band-limited</code> <code>shelves</code> <code>parallel/serial</code></li></ul>
+      </li>
+      <li><b class="k">4 bands</b> → best fit · <b class="k">8/12/24</b> → approaches flat</li>
+      <li>every band visible — in-app or export</li>
+    </ul>
+  </div>
+</section>
+
+<section class="panel" id="s6" data-label="Playback">
+  <div class="panel-inner">
+    <div class="eyebrow"><span class="num">6</span><h2>Playback + Preview</h2></div>
+    <ul>
+      <li><b class="k">listen to your decisions in real time</b></li>
+      <li>full built-in DSP + mixer stage</li>
+      <li>two engines:
+        <ul>
+          <li><b class="k">internal</b> — test signals, measure, capture</li>
+          <li><b class="k">external</b> (extracted, host/client) — playback</li>
+          <li>seamless switch via Playback mode</li>
+        </ul>
+      </li>
+      <li>virtual sound card:
+        <ul>
+          <li>grabs system audio (Spotify, YouTube…) → correction → out</li>
+          <li>or feed external audio in</li>
+        </ul>
+      </li>
+      <li>external engine standalone:
+        <ul>
+          <li>close main app → light playback UI keeps running</li>
+          <li>run DSP as a service on server / hardware; control from laptop or phone</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<section class="panel" id="s7" data-label="Deploy">
+  <div class="panel-inner">
+    <div class="eyebrow"><span class="num">7</span><h2>Deploy / Output</h2></div>
+    <ul>
+      <li><b class="k">ongoing DSP server</b> — low-latency throughput, or</li>
+      <li><b class="k">export to manufacturers:</b>
+        <ul>
+          <li><code>Q-SYS</code> <code>Lab.gruppen</code> <code>d&amp;b R1</code> <code>Linea</code> (here today)</li>
+          <li>supported features shown per format</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<section class="panel" id="s8" data-label="Advanced">
+  <div class="panel-inner">
+    <div class="eyebrow"><span class="num">8</span><h2>Advanced</h2></div>
+    <ul>
+      <li><b class="k">Heatmaps</b> — the spatial field</li>
+      <li><b class="k">Vector time-domain analysis</b>
+        <ul><li>directional impulse response in a spatial model → room + reflections</li></ul>
+      </li>
+      <li><b class="k">Room inference</b>
+        <ul><li>boundaries from 1st / 2nd-order reflections</li></ul>
+      </li>
+      <li><b class="k">Room-mode analysis</b>
+        <ul><li>derived from the actual measurement data</li></ul>
+      </li>
+      <li><b class="k">Min / excess phase</b>
+        <ul><li>source phase vs room (reflections, modes, reverb)</li></ul>
+      </li>
+    </ul>
+    <div class="say">
+      <span class="lbl">Say this</span>
+      <p><b>Correct where it's effective</b> — don't try to correct where the physics won't allow it.</p>
+    </div>
+  </div>
+</section>
+
+<!-- BOTTOM STEP BAR -->
