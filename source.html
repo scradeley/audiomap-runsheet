@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="dark" data-view="brief">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
@@ -28,7 +28,7 @@
   }
 
   * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-  html, body { margin:0; height:100%; }
+  html, body { margin:0; height:100%; max-width:100%; overflow-x:hidden; }
   html {
     background:var(--bg); color:var(--ink);
     font-family:var(--sans); font-size:21px; line-height:1.5;
@@ -40,6 +40,13 @@
     -webkit-overflow-scrolling:touch;
     scroll-padding-top: 6px;
   }
+  .panel-inner, li, p, h1, h2 { overflow-wrap:anywhere; word-break:break-word; }
+  .steps-line { overflow-wrap:anywhere; }
+
+  /* dual-view visibility */
+  .view.detail { display:none; }
+  :root[data-view="detail"] .view.detail { display:block; }
+  :root[data-view="detail"] .view.brief { display:none; }
 
   .progress {
     position:fixed; top:0; left:0; height:4px; width:0%;
@@ -51,7 +58,7 @@
   .panel {
     scroll-snap-align:start;
     min-height:100dvh;
-    padding: calc(env(safe-area-inset-top) + 22px) 20px calc(var(--bar-h) + env(safe-area-inset-bottom) + 30px);
+    padding: calc(env(safe-area-inset-top) + 66px) 20px calc(var(--bar-h) + env(safe-area-inset-bottom) + 30px);
     display:flex; flex-direction:column; justify-content:flex-start;
   }
   .panel-inner { width:100%; max-width:680px; margin:0 auto; }
@@ -94,6 +101,14 @@
   }
   b.k { color:var(--ink); font-weight:650; }
 
+  /* detailed prose */
+  .view.detail p.para {
+    font-size:19px; line-height:1.5; color:var(--ink-dim); margin:14px 0;
+  }
+  .view.detail p.para b { color:var(--ink); font-weight:600; }
+  .view.detail li { font-size:20px; }
+  .view.detail li ul li { font-size:18px; }
+
   code {
     font-family:var(--mono); font-size:.82em;
     background:var(--panel-2); color:var(--ink);
@@ -118,7 +133,7 @@
     text-transform:uppercase; color:var(--ink-faint); margin:24px 0 8px;
   }
 
-  .cover .panel-inner{ margin-top:9vh; }
+  .cover .panel-inner{ margin-top:8vh; }
   .cover .kick {
     font-family:var(--mono); font-size:16px; letter-spacing:.2em;
     text-transform:uppercase; color:var(--signal); margin:0 0 16px;
@@ -136,8 +151,23 @@
   .swatch { width:16px; height:16px; border-radius:5px; flex-shrink:0; }
   .cover .go {
     margin-top:34px; font-family:var(--mono); font-size:16px;
-    color:var(--ink-faint); letter-spacing:.04em;
+    color:var(--ink-faint); letter-spacing:.04em; line-height:1.7;
   }
+
+  /* view toggle (top-center) */
+  .viewtog {
+    position:fixed; top:calc(env(safe-area-inset-top) + 10px); left:50%;
+    transform:translateX(-50%); z-index:41;
+    display:flex; background:var(--panel); border:1px solid var(--line);
+    border-radius:999px; padding:4px;
+  }
+  .viewtog button {
+    border:0; background:transparent; color:var(--ink-dim);
+    font-family:var(--mono); font-size:14px; font-weight:600; letter-spacing:.03em;
+    padding:9px 17px; border-radius:999px; cursor:pointer; min-height:38px;
+    transition:color .12s, background .12s;
+  }
+  .viewtog button.active { background:var(--signal); color:var(--bg); }
 
   .bar {
     position:fixed; left:0; right:0; bottom:0; z-index:30;
@@ -166,10 +196,10 @@
   .bar button.active .bn { color:var(--bg); }
 
   .theme-btn {
-    position:fixed; top:calc(env(safe-area-inset-top) + 10px); right:12px; z-index:40;
-    width:44px; height:44px; border-radius:50%;
+    position:fixed; top:calc(env(safe-area-inset-top) + 12px); right:12px; z-index:42;
+    width:40px; height:40px; border-radius:50%;
     background:var(--panel); border:1px solid var(--line); color:var(--ink-dim);
-    font-size:19px; cursor:pointer; display:grid; place-items:center;
+    font-size:18px; cursor:pointer; display:grid; place-items:center;
   }
 </style>
 </head>
@@ -184,33 +214,58 @@
       <span><i class="swatch" style="background:var(--say)"></i> the line to land</span>
       <span><i class="swatch" style="background:var(--new)"></i> new in v2</span>
     </div>
-    <p class="go">▲ swipe up &nbsp;·&nbsp; or tap a step below</p>
+    <p class="go">▲ swipe up &nbsp;·&nbsp; tap a step below<br>Brief / Detailed toggle up top</p>
   </div>
 </section>
 
+<!-- 1 -->
 <section class="panel" id="s1" data-label="Setup">
   <div class="panel-inner">
     <div class="eyebrow"><span class="num">1</span><h2>Setup Wizard</h2></div>
     <p class="steps-line"><b>Audio device</b><span class="sep">›</span><b>Topology</b><span class="sep">›</span><b>Gain</b><span class="sep">›</span><b>Identification</b><span class="sep">›</span><b>Positioning</b><span class="sep">›</span><b>Coverage</b></p>
-    <ul>
-      <li><b class="k">Topology = define the system's structure</b>
-        <ul>
-          <li>FOH console · inline processor · processing in the amps</li>
-          <li>multi-channel · multi-way (band-limited + crossover network)</li>
-          <li>presets to get you going</li>
-        </ul>
-      </li>
-      <li><b class="k">Positioning + Identification = spatial ground truth</b>
-        <ul>
-          <li>baseline timing / distance measurements</li>
-          <li>user confirms or specifies</li>
-        </ul>
-      </li>
-      <li>the picture builds page by page</li>
-    </ul>
+
+    <div class="view brief">
+      <ul>
+        <li><b class="k">Topology = define the system's structure</b>
+          <ul>
+            <li>FOH console · inline processor · processing in the amps</li>
+            <li>multi-channel · multi-way (band-limited + crossover network)</li>
+            <li>presets to get you going</li>
+          </ul>
+        </li>
+        <li><b class="k">Positioning + Identification = spatial ground truth</b>
+          <ul>
+            <li>baseline timing / distance measurements</li>
+            <li>user confirms or specifies</li>
+          </ul>
+        </li>
+        <li>the picture builds page by page</li>
+      </ul>
+    </div>
+
+    <div class="view detail">
+      <p class="para">Five pages that build a picture of the system before we measure anything.</p>
+      <ul>
+        <li><b class="k">Topology — the important one.</b> Describe how the system is actually built:
+          <ul>
+            <li>where processing lives — FOH console, an inline processor, or in the amps</li>
+            <li>channel count, and whether boxes are multi-way (band-limited + a crossover network)</li>
+            <li>presets match common rigs so you start close, then adjust</li>
+          </ul>
+        </li>
+        <li><b class="k">Identification + Positioning</b> establish the spatial layout:
+          <ul>
+            <li>baseline timing / distance measurements for each source</li>
+            <li>you confirm or type in what we find → a ground-truth model of where everything is</li>
+          </ul>
+        </li>
+        <li><b class="k">Gain structure</b> and <b class="k">Coverage area</b> finish the setup — clean levels, and the listening area we optimise for.</li>
+      </ul>
+    </div>
   </div>
 </section>
 
+<!-- 2 -->
 <section class="panel" id="s2" data-label="Capture">
   <div class="panel-inner">
     <div class="eyebrow"><span class="num">2</span><h2>Auto-Capture</h2></div>
@@ -218,143 +273,306 @@
       <span class="lbl">Say this</span>
       <p><b>One pass, spatially aware.</b> Every source at every position, simultaneously — no manual choreography.</p>
     </div>
-    <ul>
-      <li>all sources, all positions, single pass</li>
-      <li>simultaneous cross-correlation → position</li>
-      <li>transfer-function capture, time-domain multiplexed across sources</li>
-      <li><b class="k">replaces</b> the grind: generator, routing, muting, alignment, naming — repeated</li>
-      <li>builds the right averages across the listening area</li>
-    </ul>
+
+    <div class="view brief">
+      <ul>
+        <li>all sources, all positions, single pass</li>
+        <li>simultaneous cross-correlation → position</li>
+        <li>transfer-function capture, time-domain multiplexed across sources</li>
+        <li><b class="k">replaces</b> the grind: generator, routing, muting, alignment, naming — repeated</li>
+        <li>builds the right averages across the listening area</li>
+      </ul>
+    </div>
+
+    <div class="view detail">
+      <p class="para">One pass captures <b>every source at every mic position</b> — and it's spatially aware.</p>
+      <ul>
+        <li>at each position it runs <b class="k">simultaneous cross-correlation</b> across all sources → works out where the mic is</li>
+        <li>then <b class="k">transfer-function capture, time-domain multiplexed</b> across sources → every source measured in the one pass</li>
+        <li>no manual choreography — you're not hand-driving the generator, routing, muting, alignment, capture, naming and positioning, then repeating it per position and fighting to keep it organised</li>
+      </ul>
+      <p class="para">Result: a full, organised data set plus the <b>correct averages across the listening area</b> — ready to work with.</p>
+    </div>
   </div>
 </section>
 
+<!-- 3 -->
 <section class="panel" id="s3" data-label="Measure">
   <div class="panel-inner">
     <div class="eyebrow"><span class="num">3</span><h2>Measure Tab</h2></div>
-    <ul>
-      <li>all one-pass data, ready to analyse</li>
-      <li>view in <b class="k">time · frequency · spatial</b> domains</li>
-    </ul>
+    <div class="view brief">
+      <ul>
+        <li>all one-pass data, ready to analyse</li>
+        <li>view in <b class="k">time · frequency · spatial</b> domains</li>
+        <li><b class="k">live mic tracking</b>
+          <ul><li>real-time triangulation / trilateration follows the mic as it moves through the space — shown live on screen</li></ul>
+        </li>
+      </ul>
+    </div>
+    <div class="view detail">
+      <p class="para">All the one-pass data lands here to analyse.</p>
+      <ul>
+        <li>every measurement is viewable in <b class="k">three domains</b>:
+          <ul>
+            <li>time — impulse / arrivals</li>
+            <li>frequency — magnitude &amp; phase</li>
+            <li>spatial — the heatmap field across the space</li>
+          </ul>
+        </li>
+        <li><b class="k">live mic tracking</b>
+          <ul><li>real-time triangulation / trilateration continuously solves the mic's position as it moves through the spatial area, drawn live on screen</li></ul>
+        </li>
+      </ul>
+    </div>
   </div>
 </section>
 
+<!-- 4 -->
 <section class="panel" id="s4" data-label="Timing">
   <div class="panel-inner">
     <div class="eyebrow"><span class="num">4</span><h2>Timing Tab</h2></div>
-    <ul>
-      <li><b class="k">align multiple sources</b> — phase + coupling</li>
-      <li>modes:
-        <ul>
-          <li>broadband — delay lines, centre / out fill</li>
-          <li>band-constrained multiway — sub → tops, crossovers</li>
-        </ul>
-      </li>
-    </ul>
-    <div class="say">
-      <span class="lbl">Say this</span>
-      <p><b>Traditional:</b> align first → re-measure → then EQ. <b>AudioMap:</b> one capture, before &amp; after computed together, feeding every EQ decision.</p>
+
+    <div class="view brief">
+      <ul>
+        <li><b class="k">align multiple sources</b> — phase + coupling</li>
+        <li>modes:
+          <ul>
+            <li>broadband — delay lines, centre / out fill</li>
+            <li>band-constrained multiway — sub → tops, crossovers</li>
+          </ul>
+        </li>
+      </ul>
+      <div class="say">
+        <span class="lbl">Say this</span>
+        <p><b>Traditional:</b> align first → re-measure → then EQ. <b>AudioMap:</b> one capture, before &amp; after computed together, feeding every EQ decision.</p>
+      </div>
+      <ul>
+        <li>before vs after in <b class="k">time, frequency AND spatial</b></li>
+      </ul>
     </div>
-    <ul>
-      <li>before vs after in <b class="k">time, frequency AND spatial</b></li>
-    </ul>
+
+    <div class="view detail">
+      <p class="para">Decide how the system <b>time-aligns across multiple sources</b> — accounting for phase and coupling.</p>
+      <ul>
+        <li>two families of alignment:
+          <ul>
+            <li><b class="k">broadband</b> — whole-range delay: delay lines, centre / out fill</li>
+            <li><b class="k">band-constrained multiway</b> — phase-align across a crossover: sub → tops, or deeper multi-way</li>
+          </ul>
+        </li>
+      </ul>
+      <div class="say">
+        <span class="lbl">Say this</span>
+        <p><b>Traditional:</b> align first, re-measure the aligned system, then take more measurements to build the transfer functions for EQ. <b>AudioMap:</b> the one capture already contains it all — before and after alignment are computed from it, and that feeds straight into the EQ.</p>
+      </div>
+      <ul>
+        <li>analyse before vs after in all three domains — <b class="k">time, frequency and spatial</b></li>
+      </ul>
+    </div>
   </div>
 </section>
 
+<!-- 5 -->
 <section class="panel" id="s5" data-label="Tuning">
   <div class="panel-inner">
     <div class="eyebrow"><span class="num">5</span><h2>Tuning Tab</h2><span class="tag">v2</span></div>
-    <ul>
-      <li><b class="k">auto-created, per-source</b> — one tuning per box
-        <ul><li>stereo = separate L / R</li></ul>
-      </li>
-    </ul>
-    <div class="say">
-      <span class="lbl">New v2 · Groups</span>
-      <p>One aligned-sum tuning across a group. FOH: quick measures → parallel tuning on the master bus. Or per-section: tops / fills / subs.</p>
+
+    <div class="view brief">
+      <ul>
+        <li><b class="k">auto-created, per-source</b> — one tuning per box
+          <ul><li>stereo = separate L / R</li></ul>
+        </li>
+      </ul>
+      <div class="say">
+        <span class="lbl">New v2 · Groups</span>
+        <p>One aligned-sum tuning across a group. FOH: quick measures → parallel tuning on the master bus. Or per-section: tops / fills / subs.</p>
+      </div>
+      <p class="subhead">Default — per-box (best result)</p>
+      <ul>
+        <li>handles L-vs-R room differences</li>
+        <li>corrects <b class="k">at the source</b> → max power per box, before the room varies it</li>
+      </ul>
+      <p class="subhead">How it's built</p>
+      <ul>
+        <li>power average over coverage → magnitude curve to correct</li>
+        <li>inverse = target correction</li>
+        <li>algo adapts in real time to your DSP:
+          <ul><li><code># bands</code> <code>IIR/FIR</code> <code>min/lin phase</code> <code>band-limited</code> <code>shelves</code> <code>parallel/serial</code></li></ul>
+        </li>
+        <li><b class="k">4 bands</b> → best fit · <b class="k">8/12/24</b> → approaches flat</li>
+        <li><b class="k">tilt targets</b> layer over the flat correction — aim for a house curve, not just flat</li>
+        <li>every band visible — in-app or export</li>
+      </ul>
     </div>
-    <p class="subhead">Default — per-box (best result)</p>
-    <ul>
-      <li>handles L-vs-R room differences</li>
-      <li>corrects <b class="k">at the source</b> → max power per box, before the room varies it</li>
-    </ul>
-    <p class="subhead">How it's built</p>
-    <ul>
-      <li>power average over coverage → magnitude curve to correct</li>
-      <li>inverse = target correction</li>
-      <li>algo adapts in real time to your DSP:
-        <ul><li><code># bands</code> <code>IIR/FIR</code> <code>min/lin phase</code> <code>band-limited</code> <code>shelves</code> <code>parallel/serial</code></li></ul>
-      </li>
-      <li><b class="k">4 bands</b> → best fit · <b class="k">8/12/24</b> → approaches flat</li>
-      <li>every band visible — in-app or export</li>
-    </ul>
+
+    <div class="view detail">
+      <p class="para">A tuning is <b>created automatically for every source</b> — one per box. Stereo = a separate tuning for L and for R.</p>
+      <div class="say">
+        <span class="lbl">New v2 · Groups</span>
+        <p>One <b>aligned-sum</b> tuning across a set of sources. FOH-style: a few quick measurements, drop a parallel tuning across the master bus for the whole system — or per-section (tops, fills, subs) without going box-by-box.</p>
+      </div>
+      <p class="subhead">Default — per-box, and it's the best result</p>
+      <ul>
+        <li>captures L-vs-R room differences and dials each side in</li>
+        <li>correction happens <b class="k">at the source</b> → maximum power handling per box, before the room (which varies at every position) colours it</li>
+      </ul>
+      <p class="subhead">How each tuning is built</p>
+      <ul>
+        <li>start from the <b class="k">power average</b> across the coverage → the magnitude curve to correct</li>
+        <li>the <b class="k">inverse</b> of that curve is the target correction</li>
+        <li>a real-time algorithm shapes the target to your actual DSP as you change parameters:
+          <ul><li>number of bands · IIR / FIR · minimum / linear phase · correct only within chosen bands · shelving EQs · parallel (wet/dry) vs pure serial</li></ul>
+        </li>
+        <li><b class="k">4 bands</b> → the algorithm minimises the area under the curve for the best result you can get; <b class="k">8 / 12 / 24</b> → the corrected response approaches flat</li>
+        <li><b class="k">tilt targets</b> sit over the top of the flat correction — so you can aim for a house / voicing curve rather than dead flat</li>
+        <li>every applied band is visible — in-app and via export</li>
+      </ul>
+    </div>
   </div>
 </section>
 
+<!-- 6 -->
 <section class="panel" id="s6" data-label="Playback">
   <div class="panel-inner">
     <div class="eyebrow"><span class="num">6</span><h2>Playback + Preview</h2></div>
-    <ul>
-      <li><b class="k">listen to your decisions in real time</b></li>
-      <li>full built-in DSP + mixer stage</li>
-      <li>two engines:
-        <ul>
-          <li><b class="k">internal</b> — test signals, measure, capture</li>
-          <li><b class="k">external</b> (extracted, host/client) — playback</li>
-          <li>seamless switch via Playback mode</li>
-        </ul>
-      </li>
-      <li>virtual sound card:
-        <ul>
-          <li>grabs system audio (Spotify, YouTube…) → correction → out</li>
-          <li>or feed external audio in</li>
-        </ul>
-      </li>
-      <li>external engine standalone:
-        <ul>
-          <li>close main app → light playback UI keeps running</li>
-          <li>run DSP as a service on server / hardware; control from laptop or phone</li>
-        </ul>
-      </li>
-    </ul>
+
+    <div class="view brief">
+      <ul>
+        <li><b class="k">listen to your decisions in real time</b></li>
+        <li>full built-in DSP + mixer stage</li>
+        <li>two engines:
+          <ul>
+            <li><b class="k">internal</b> — test signals, measure, capture</li>
+            <li><b class="k">external</b> (extracted, host/client) — playback</li>
+            <li>seamless switch via Playback mode</li>
+          </ul>
+        </li>
+        <li>virtual sound card:
+          <ul>
+            <li>grabs system audio (Spotify, YouTube…) → correction → out</li>
+            <li>or feed external audio in</li>
+          </ul>
+        </li>
+        <li>external engine standalone:
+          <ul>
+            <li>close main app → light playback UI keeps running</li>
+            <li>run DSP as a service on server / hardware; control from laptop or phone</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <div class="view detail">
+      <p class="para">Preview and <b>listen to your decisions in real time</b>. AudioMap has a full built-in DSP + mix stage — the mixer.</p>
+      <ul>
+        <li>two audio engines:
+          <ul>
+            <li><b class="k">internal</b> — generates test signals, runs measurement and capture</li>
+            <li><b class="k">external</b> — extracted from the main app, runs host/client, handles playback</li>
+            <li>activating Playback mode switches between them seamlessly</li>
+          </ul>
+        </li>
+        <li>a <b class="k">virtual sound card</b> lets you correct anything:
+          <ul>
+            <li>grab system audio (Spotify, YouTube, any app) → through AudioMap correction → out to the system</li>
+            <li>or bring in external audio and process that</li>
+          </ul>
+        </li>
+        <li>the external engine can run on its own:
+          <ul>
+            <li>close the main app and a small, light playback UI keeps running</li>
+            <li>or run the DSP as a service on a server / hardware, and control or monitor it from a laptop or phone</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
   </div>
 </section>
 
+<!-- 7 -->
 <section class="panel" id="s7" data-label="Deploy">
   <div class="panel-inner">
     <div class="eyebrow"><span class="num">7</span><h2>Deploy / Output</h2></div>
-    <ul>
-      <li><b class="k">ongoing DSP server</b> — low-latency throughput, or</li>
-      <li><b class="k">export to manufacturers:</b>
-        <ul>
-          <li><code>Q-SYS</code> <code>Lab.gruppen</code> <code>d&amp;b R1</code> <code>Linea</code> (here today)</li>
-          <li>supported features shown per format</li>
-        </ul>
-      </li>
-    </ul>
+
+    <div class="view brief">
+      <ul>
+        <li><b class="k">ongoing DSP server</b> — low-latency throughput, or</li>
+        <li><b class="k">export to manufacturers:</b>
+          <ul>
+            <li><code>Q-SYS</code> <code>Lab.gruppen</code> <code>d&amp;b R1</code> <code>Linea</code> (here today)</li>
+            <li>supported features shown per format</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <div class="view detail">
+      <p class="para">Two ways to run the finished tuning:</p>
+      <ul>
+        <li>keep AudioMap as an <b class="k">ongoing, low-latency DSP server</b></li>
+        <li>or <b class="k">export</b> to the amplifier / DSP platform you're using
+          <ul>
+            <li>growing manufacturer support — <code>Q-SYS</code> <code>Lab.gruppen</code> <code>d&amp;b R1</code>, and the <code>Linea</code> unit we have here today</li>
+            <li>each format shows exactly which features it supports</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
   </div>
 </section>
 
+<!-- 8 -->
 <section class="panel" id="s8" data-label="Advanced">
   <div class="panel-inner">
     <div class="eyebrow"><span class="num">8</span><h2>Advanced</h2></div>
-    <ul>
-      <li><b class="k">Heatmaps</b> — the spatial field</li>
-      <li><b class="k">Vector time-domain analysis</b>
-        <ul><li>directional impulse response in a spatial model → room + reflections</li></ul>
-      </li>
-      <li><b class="k">Room inference</b>
-        <ul><li>boundaries from 1st / 2nd-order reflections</li></ul>
-      </li>
-      <li><b class="k">Room-mode analysis</b>
-        <ul><li>derived from the actual measurement data</li></ul>
-      </li>
-      <li><b class="k">Min / excess phase</b>
-        <ul><li>source phase vs room (reflections, modes, reverb)</li></ul>
-      </li>
-    </ul>
-    <div class="say">
-      <span class="lbl">Say this</span>
-      <p><b>Correct where it's effective</b> — don't try to correct where the physics won't allow it.</p>
+
+    <div class="view brief">
+      <ul>
+        <li><b class="k">Heatmaps</b> — the spatial field</li>
+        <li><b class="k">Vector time-domain analysis</b>
+          <ul><li>directional impulse response in a spatial model → room + reflections</li></ul>
+        </li>
+        <li><b class="k">Room inference</b>
+          <ul><li>boundaries from 1st / 2nd-order reflections</li></ul>
+        </li>
+        <li><b class="k">Room-mode analysis</b>
+          <ul><li>derived from the actual measurement data</li></ul>
+        </li>
+        <li><b class="k">Min / excess phase</b>
+          <ul><li>source phase vs room (reflections, modes, reverb)</li></ul>
+        </li>
+      </ul>
+      <div class="say">
+        <span class="lbl">Say this</span>
+        <p><b>Correct where it's effective</b> — don't try to correct where the physics won't allow it.</p>
+      </div>
+    </div>
+
+    <div class="view detail">
+      <ul>
+        <li><b class="k">Heatmaps</b> — the measured field across the space</li>
+        <li><b class="k">Vector-based time-domain analysis</b>
+          <ul>
+            <li>shows the directional content of the impulse response inside a spatial model</li>
+            <li>lets you see where energy and reflections are coming from</li>
+          </ul>
+        </li>
+        <li><b class="k">Room inference</b>
+          <ul><li>detects the room's boundaries from first- and second-order reflections</li></ul>
+        </li>
+        <li><b class="k">Room-mode analysis</b>
+          <ul><li>derived from the actual measurement data — not a model</li></ul>
+        </li>
+        <li><b class="k">Minimum / excess phase</b>
+          <ul>
+            <li>separates phase introduced at the source / speaker from phase caused by the room — reflections, modes, reverberant space</li>
+          </ul>
+        </li>
+      </ul>
+      <div class="say">
+        <span class="lbl">Say this</span>
+        <p><b>Correct where correction is effective</b> — and don't attempt to correct where the physics simply won't allow it.</p>
+      </div>
     </div>
   </div>
 </section>

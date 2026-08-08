@@ -54,6 +54,10 @@ const gated = head + `
 <body>
 
 <div class="progress" id="progress"></div>
+<div class="viewtog" id="viewTog" hidden>
+  <button data-view="brief" class="active">Brief</button>
+  <button data-view="detail">Detailed</button>
+</div>
 <button class="theme-btn" id="themeBtn" aria-label="Toggle theme">◐</button>
 
 <div class="gate" id="gate">
@@ -105,6 +109,12 @@ const gated = head + `
   var enc=new TextEncoder(), dec=new TextDecoder();
   function b(s){ return Uint8Array.from(atob(s), function(c){return c.charCodeAt(0);}); }
 
+  // apply saved Brief/Detailed view early
+  try {
+    var savedView=localStorage.getItem('rs_view');
+    if(savedView) document.documentElement.setAttribute('data-view', savedView);
+  } catch(e){}
+
   async function decrypt(pw){
     var bk=await crypto.subtle.importKey('raw', enc.encode(pw), 'PBKDF2', false, ['deriveKey']);
     var k=await crypto.subtle.deriveKey(
@@ -119,6 +129,8 @@ const gated = head + `
     deck.innerHTML=html; deck.hidden=false;
     var gate=document.getElementById('gate'); if(gate) gate.remove();
     document.getElementById('navbar').hidden=false;
+    document.getElementById('viewTog').hidden=false;
+    initViewToggle();
     initRunsheet();
   }
 
@@ -154,6 +166,25 @@ const gated = head + `
     var m=document.querySelector('meta[name=theme-color]');
     if(m) m.setAttribute('content', cur==='dark'?'#f4f6f8':'#0c0f13');
   });
+
+  // ---- Brief / Detailed toggle ----
+  function initViewToggle(){
+    var tog=document.getElementById('viewTog');
+    var btns=Array.prototype.slice.call(tog.querySelectorAll('button'));
+    function sync(){
+      var v=document.documentElement.getAttribute('data-view')||'brief';
+      btns.forEach(function(b){ b.classList.toggle('active', b.dataset.view===v); });
+    }
+    btns.forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var v=btn.dataset.view;
+        document.documentElement.setAttribute('data-view', v);
+        try { localStorage.setItem('rs_view', v); } catch(e){}
+        sync();
+      });
+    });
+    sync();
+  }
 
   // ---- run sheet nav (runs after content is injected) ----
   function initRunsheet(){
