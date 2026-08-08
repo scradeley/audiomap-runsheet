@@ -182,248 +182,134 @@
 <div class="progress" id="progress"></div>
 <button class="theme-btn" id="themeBtn" aria-label="Toggle theme">◐</button>
 
-<!-- COVER -->
-<section class="panel cover" id="s0" data-label="Start">
-  <div class="panel-inner">
-    <p class="kick">Presenter Run Sheet</p>
-    <h1>AudioMap<br>Live Demo</h1>
-    <p class="lede">Setup → Capture → Measure → Timing → Tuning → Playback → Deploy</p>
-    <div class="legend">
-      <span><i class="swatch" style="background:var(--signal)"></i> structure &amp; steps</span>
-      <span><i class="swatch" style="background:var(--say)"></i> the line to land</span>
-      <span><i class="swatch" style="background:var(--new)"></i> new in v2</span>
-    </div>
-    <p class="go">▲ swipe up &nbsp;·&nbsp; or tap a step below</p>
+<div class="gate" id="gate">
+  <div class="gate-card">
+    <div class="gate-mark">◆</div>
+    <p class="gate-kick">AudioMap</p>
+    <h1 class="gate-title">Demo Run Sheet</h1>
+    <form id="gateForm" autocomplete="off">
+      <input id="pw" type="password" inputmode="text" placeholder="Password"
+             autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Password">
+      <button type="submit">Enter</button>
+    </form>
+    <p class="gate-err" id="gateErr">&nbsp;</p>
   </div>
-</section>
+</div>
 
-<!-- 01 -->
-<section class="panel" id="s1" data-label="Setup">
-  <div class="panel-inner">
-    <div class="eyebrow"><span class="num">1</span><h2>Setup Wizard</h2></div>
-    <p class="steps-line"><b>Audio device</b><span class="sep">›</span><b>Topology</b><span class="sep">›</span><b>Gain</b><span class="sep">›</span><b>Identification</b><span class="sep">›</span><b>Positioning</b><span class="sep">›</span><b>Coverage</b></p>
-    <ul>
-      <li><b class="k">Topology = define the system's structure</b>
-        <ul>
-          <li>FOH console · inline processor · processing in the amps</li>
-          <li>multi-channel · multi-way (band-limited + crossover network)</li>
-          <li>presets to get you going</li>
-        </ul>
-      </li>
-      <li><b class="k">Positioning + Identification = spatial ground truth</b>
-        <ul>
-          <li>baseline timing / distance measurements</li>
-          <li>user confirms or specifies</li>
-        </ul>
-      </li>
-      <li>the picture builds page by page</li>
-    </ul>
-  </div>
-</section>
+<div id="deck" hidden></div>
 
-<!-- 02 -->
-<section class="panel" id="s2" data-label="Capture">
-  <div class="panel-inner">
-    <div class="eyebrow"><span class="num">2</span><h2>Auto-Capture</h2></div>
-    <div class="say">
-      <span class="lbl">Say this</span>
-      <p><b>One pass, spatially aware.</b> Every source at every position, simultaneously — no manual choreography.</p>
-    </div>
-    <ul>
-      <li>all sources, all positions, single pass</li>
-      <li>simultaneous cross-correlation → position</li>
-      <li>transfer-function capture, time-domain multiplexed across sources</li>
-      <li><b class="k">replaces</b> the grind: generator, routing, muting, alignment, naming — repeated</li>
-      <li>builds the right averages across the listening area</li>
-    </ul>
-  </div>
-</section>
+<nav class="bar" id="navbar" hidden><div class="bar-scroll" id="barScroll"></div></nav>
 
-<!-- 03 -->
-<section class="panel" id="s3" data-label="Measure">
-  <div class="panel-inner">
-    <div class="eyebrow"><span class="num">3</span><h2>Measure Tab</h2></div>
-    <ul>
-      <li>all one-pass data, ready to analyse</li>
-      <li>view in <b class="k">time · frequency · spatial</b> domains</li>
-    </ul>
-  </div>
-</section>
-
-<!-- 04 -->
-<section class="panel" id="s4" data-label="Timing">
-  <div class="panel-inner">
-    <div class="eyebrow"><span class="num">4</span><h2>Timing Tab</h2></div>
-    <ul>
-      <li><b class="k">align multiple sources</b> — phase + coupling</li>
-      <li>modes:
-        <ul>
-          <li>broadband — delay lines, centre / out fill</li>
-          <li>band-constrained multiway — sub → tops, crossovers</li>
-        </ul>
-      </li>
-    </ul>
-    <div class="say">
-      <span class="lbl">Say this</span>
-      <p><b>Traditional:</b> align first → re-measure → then EQ. <b>AudioMap:</b> one capture, before &amp; after computed together, feeding every EQ decision.</p>
-    </div>
-    <ul>
-      <li>before vs after in <b class="k">time, frequency AND spatial</b></li>
-    </ul>
-  </div>
-</section>
-
-<!-- 05 -->
-<section class="panel" id="s5" data-label="Tuning">
-  <div class="panel-inner">
-    <div class="eyebrow"><span class="num">5</span><h2>Tuning Tab</h2><span class="tag">v2</span></div>
-    <ul>
-      <li><b class="k">auto-created, per-source</b> — one tuning per box
-        <ul><li>stereo = separate L / R</li></ul>
-      </li>
-    </ul>
-    <div class="say">
-      <span class="lbl">New v2 · Groups</span>
-      <p>One aligned-sum tuning across a group. FOH: quick measures → parallel tuning on the master bus. Or per-section: tops / fills / subs.</p>
-    </div>
-    <p class="subhead">Default — per-box (best result)</p>
-    <ul>
-      <li>handles L-vs-R room differences</li>
-      <li>corrects <b class="k">at the source</b> → max power per box, before the room varies it</li>
-    </ul>
-    <p class="subhead">How it's built</p>
-    <ul>
-      <li>power average over coverage → magnitude curve to correct</li>
-      <li>inverse = target correction</li>
-      <li>algo adapts in real time to your DSP:
-        <ul><li><code># bands</code> <code>IIR/FIR</code> <code>min/lin phase</code> <code>band-limited</code> <code>shelves</code> <code>parallel/serial</code></li></ul>
-      </li>
-      <li><b class="k">4 bands</b> → best fit · <b class="k">8/12/24</b> → approaches flat</li>
-      <li>every band visible — in-app or export</li>
-    </ul>
-  </div>
-</section>
-
-<!-- 06 -->
-<section class="panel" id="s6" data-label="Playback">
-  <div class="panel-inner">
-    <div class="eyebrow"><span class="num">6</span><h2>Playback + Preview</h2></div>
-    <ul>
-      <li><b class="k">listen to your decisions in real time</b></li>
-      <li>full built-in DSP + mixer stage</li>
-      <li>two engines:
-        <ul>
-          <li><b class="k">internal</b> — test signals, measure, capture</li>
-          <li><b class="k">external</b> (extracted, host/client) — playback</li>
-          <li>seamless switch via Playback mode</li>
-        </ul>
-      </li>
-      <li>virtual sound card:
-        <ul>
-          <li>grabs system audio (Spotify, YouTube…) → correction → out</li>
-          <li>or feed external audio in</li>
-        </ul>
-      </li>
-      <li>external engine standalone:
-        <ul>
-          <li>close main app → light playback UI keeps running</li>
-          <li>run DSP as a service on server / hardware; control from laptop or phone</li>
-        </ul>
-      </li>
-    </ul>
-  </div>
-</section>
-
-<!-- 07 -->
-<section class="panel" id="s7" data-label="Deploy">
-  <div class="panel-inner">
-    <div class="eyebrow"><span class="num">7</span><h2>Deploy / Output</h2></div>
-    <ul>
-      <li><b class="k">ongoing DSP server</b> — low-latency throughput, or</li>
-      <li><b class="k">export to manufacturers:</b>
-        <ul>
-          <li><code>Q-SYS</code> <code>Lab.gruppen</code> <code>d&amp;b R1</code> <code>Linea</code> (here today)</li>
-          <li>supported features shown per format</li>
-        </ul>
-      </li>
-    </ul>
-  </div>
-</section>
-
-<!-- 08 -->
-<section class="panel" id="s8" data-label="Advanced">
-  <div class="panel-inner">
-    <div class="eyebrow"><span class="num">8</span><h2>Advanced</h2></div>
-    <ul>
-      <li><b class="k">Heatmaps</b> — the spatial field</li>
-      <li><b class="k">Vector time-domain analysis</b>
-        <ul><li>directional impulse response in a spatial model → room + reflections</li></ul>
-      </li>
-      <li><b class="k">Room inference</b>
-        <ul><li>boundaries from 1st / 2nd-order reflections</li></ul>
-      </li>
-      <li><b class="k">Room-mode analysis</b>
-        <ul><li>derived from the actual measurement data</li></ul>
-      </li>
-      <li><b class="k">Min / excess phase</b>
-        <ul><li>source phase vs room (reflections, modes, reverb)</li></ul>
-      </li>
-    </ul>
-    <div class="say">
-      <span class="lbl">Say this</span>
-      <p><b>Correct where it's effective</b> — don't try to correct where the physics won't allow it.</p>
-    </div>
-  </div>
-</section>
-
-<!-- BOTTOM STEP BAR -->
-<nav class="bar"><div class="bar-scroll" id="barScroll"></div></nav>
+<style>
+  .gate {
+    position:fixed; inset:0; z-index:50; background:var(--bg);
+    display:grid; place-items:center; padding:24px;
+    padding-top:calc(env(safe-area-inset-top) + 24px);
+  }
+  .gate-card { width:100%; max-width:340px; text-align:center; }
+  .gate-mark { font-family:var(--mono); font-size:34px; color:var(--signal); margin-bottom:6px; }
+  .gate-kick { font-family:var(--mono); font-size:12px; letter-spacing:.2em; text-transform:uppercase; color:var(--signal); margin:0 0 6px; }
+  .gate-title { font-size:30px; margin:0 0 26px; letter-spacing:-0.02em; font-weight:750; }
+  #gateForm { display:flex; flex-direction:column; gap:10px; }
+  #pw {
+    font-family:var(--sans); font-size:17px; text-align:center;
+    color:var(--ink); background:var(--panel); border:1px solid var(--line);
+    border-radius:12px; padding:15px 16px; outline:none; width:100%;
+  }
+  #pw:focus { border-color:var(--signal); }
+  #gateForm button {
+    font-family:var(--mono); font-size:15px; font-weight:700; letter-spacing:.04em;
+    color:var(--bg); background:var(--signal); border:0; border-radius:12px;
+    padding:15px; cursor:pointer; width:100%;
+  }
+  .gate-err { font-family:var(--mono); font-size:13px; color:#ff6b6b; margin:14px 0 0; min-height:18px; }
+</style>
 
 <script>
 (function(){
-  var panels = Array.prototype.slice.call(document.querySelectorAll('.panel'));
-  var bar = document.getElementById('barScroll');
-  var progress = document.getElementById('progress');
+  var SALT="QNSNvRTnltiIOH6jYQnrnA==", IV="BhFcTzTbGQME7wV5", DATA="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", ITER=150000;
+  var enc=new TextEncoder(), dec=new TextDecoder();
+  function b(s){ return Uint8Array.from(atob(s), function(c){return c.charCodeAt(0);}); }
 
-  // build bottom bar
-  panels.forEach(function(p, i){
-    var b = document.createElement('button');
-    b.dataset.target = p.id;
-    b.innerHTML = (i===0 ? '<span class="bn">◆</span>' : '<span class="bn">'+i+'</span>') +
-                  '<span>'+ p.dataset.label +'</span>';
-    b.addEventListener('click', function(){
-      document.getElementById(p.id).scrollIntoView({behavior:'smooth', block:'start'});
-    });
-    bar.appendChild(b);
-  });
-  var btns = Array.prototype.slice.call(bar.children);
-
-  function setActive(idx){
-    btns.forEach(function(b,i){ b.classList.toggle('active', i===idx); });
-    var el = btns[idx];
-    if(el) el.scrollIntoView({inline:'center', block:'nearest', behavior:'smooth'});
-    progress.style.width = (idx/(panels.length-1))*100 + '%';
+  async function decrypt(pw){
+    var bk=await crypto.subtle.importKey('raw', enc.encode(pw), 'PBKDF2', false, ['deriveKey']);
+    var k=await crypto.subtle.deriveKey(
+      {name:'PBKDF2', salt:b(SALT), iterations:ITER, hash:'SHA-256'},
+      bk, {name:'AES-GCM', length:256}, false, ['decrypt']);
+    var pt=await crypto.subtle.decrypt({name:'AES-GCM', iv:b(IV)}, k, b(DATA));
+    return dec.decode(pt);
   }
 
-  var io = new IntersectionObserver(function(entries){
-    entries.forEach(function(e){
-      if(e.isIntersecting){
-        var idx = panels.indexOf(e.target);
-        if(idx>=0) setActive(idx);
-      }
-    });
-  }, { rootMargin: '-45% 0px -45% 0px', threshold: 0 });
-  panels.forEach(function(p){ io.observe(p); });
-  setActive(0);
+  function reveal(html){
+    var deck=document.getElementById('deck');
+    deck.innerHTML=html; deck.hidden=false;
+    var gate=document.getElementById('gate'); if(gate) gate.remove();
+    document.getElementById('navbar').hidden=false;
+    initRunsheet();
+  }
 
-  // theme toggle
-  document.getElementById('themeBtn').addEventListener('click', function(){
-    var r = document.documentElement;
-    var cur = r.getAttribute('data-theme') || 'dark';
-    r.setAttribute('data-theme', cur==='dark' ? 'light' : 'dark');
-    document.querySelector('meta[name=theme-color]')
-      .setAttribute('content', cur==='dark' ? '#f4f6f8' : '#0c0f13');
+  async function tryPw(pw, onFail){
+    try {
+      var html=await decrypt(pw);
+      try { sessionStorage.setItem('rs_pw', pw); } catch(e){}
+      reveal(html);
+    } catch(e){ if(onFail) onFail(); }
+  }
+
+  var form=document.getElementById('gateForm');
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var pw=document.getElementById('pw').value.trim();
+    document.getElementById('gateErr').textContent='\u00a0';
+    tryPw(pw, function(){
+      document.getElementById('gateErr').textContent='Incorrect — try again';
+      document.getElementById('pw').select();
+    });
   });
+
+  // auto-unlock within the same session
+  try {
+    var cached=sessionStorage.getItem('rs_pw');
+    if(cached) tryPw(cached, function(){ try{sessionStorage.removeItem('rs_pw');}catch(e){} });
+  } catch(e){}
+
+  // theme toggle (works pre- and post-unlock)
+  document.getElementById('themeBtn').addEventListener('click', function(){
+    var r=document.documentElement, cur=r.getAttribute('data-theme')||'dark';
+    r.setAttribute('data-theme', cur==='dark'?'light':'dark');
+    var m=document.querySelector('meta[name=theme-color]');
+    if(m) m.setAttribute('content', cur==='dark'?'#f4f6f8':'#0c0f13');
+  });
+
+  // ---- run sheet nav (runs after content is injected) ----
+  function initRunsheet(){
+    var panels=Array.prototype.slice.call(document.querySelectorAll('.panel'));
+    var bar=document.getElementById('barScroll');
+    var progress=document.getElementById('progress');
+    panels.forEach(function(p,i){
+      var btn=document.createElement('button');
+      btn.innerHTML=(i===0?'<span class="bn">\u25c6</span>':'<span class="bn">'+i+'</span>')
+                    +'<span>'+p.dataset.label+'</span>';
+      btn.addEventListener('click', function(){
+        document.getElementById(p.id).scrollIntoView({behavior:'smooth', block:'start'});
+      });
+      bar.appendChild(btn);
+    });
+    var btns=Array.prototype.slice.call(bar.children);
+    function setActive(idx){
+      btns.forEach(function(b,i){ b.classList.toggle('active', i===idx); });
+      var el=btns[idx]; if(el) el.scrollIntoView({inline:'center', block:'nearest', behavior:'smooth'});
+      progress.style.width=(idx/(panels.length-1))*100+'%';
+    }
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){ var idx=panels.indexOf(e.target); if(idx>=0) setActive(idx); }
+      });
+    }, {rootMargin:'-45% 0px -45% 0px', threshold:0});
+    panels.forEach(function(p){ io.observe(p); });
+    setActive(0);
+    window.scrollTo(0,0);
+  }
 })();
 </script>
 </body>
