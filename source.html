@@ -337,13 +337,21 @@
             <li>band-constrained multiway — sub → tops, crossovers</li>
           </ul>
         </li>
+        <li><b class="k">crossover-point alignment</b>
+          <ul>
+            <li>pick a specific frequency crossover point</li>
+            <li>any source or average as the anchor / reference</li>
+            <li>optimise to one position, or averages across many (coverage)</li>
+            <li>target: minimise worst error <b class="k">or</b> best average</li>
+          </ul>
+        </li>
       </ul>
       <div class="say">
         <span class="lbl">Say this</span>
         <p><b>Traditional:</b> align first → re-measure → then EQ. <b>AudioMap:</b> one capture, before &amp; after computed together, feeding every EQ decision.</p>
       </div>
       <ul>
-        <li>before vs after in <b class="k">time, frequency AND spatial</b></li>
+        <li>before vs after in <b class="k">time, frequency AND spatial</b> — and it all carries through to the DSP / playback</li>
       </ul>
     </div>
 
@@ -361,7 +369,13 @@
         <span class="lbl">Say this — the workflow difference</span>
         <p>The <b>traditional</b> approach usually means doing time alignment first, then taking all your measurements on an already-aligned system — which leaves you taking <b>post-alignment</b> measurements to build the transfer functions for EQ / frequency-domain correction. With <b>AudioMap</b> you capture everything in one pass, before-and-after time alignment is calculated from it, and that's taken into account when you consider any EQ adjustment.</p>
       </div>
-      <p class="para">And again — everything can be analysed and viewed not just in the time and frequency domains, but in the <b>spatial domain</b> too.</p>
+      <p class="subhead">Crossover-point alignment</p>
+      <p class="para">A crossover-point alignment can be chosen <b>specific to a frequency-domain crossover point</b> — and you can pick <b>any source, or even an average combination</b>, as the anchor / timing reference.</p>
+      <ul>
+        <li>optimise it to a <b class="k">specific listening position</b>, or to <b class="k">averages across multiple positions</b> for a larger coverage area</li>
+        <li>set the optimisation to <b class="k">minimise the worst-case errors</b>, or to give the <b class="k">best average</b> across all errors</li>
+      </ul>
+      <p class="para">And again — the results of any decision can be seen in the time, frequency and <b>spatial</b> domains, and they carry straight through to the <b>audio engine / DSP and playback</b>.</p>
     </div>
   </div>
 </section>
